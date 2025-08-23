@@ -1,15 +1,15 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
 
 @Controller('transactions')
 export class TransactionsController {
-  constructor(private transactionsService: TransactionsService) {
-    this.transactionsService.find_by_user(1);
-  }
+  constructor(private transactionsService: TransactionsService) {}
 
   @Get('find_by_user')
-  findAll() {
-    return this.transactionsService.find_by_user(1);
+  findAll(@Query('p') page: string) {
+    const pageNumber = parseInt(page, 10) || 1; 
+    console.log("page Number: "+pageNumber)
+    return this.transactionsService.find_by_user(pageNumber);
   }
 
   @Post('search')
