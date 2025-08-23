@@ -135,5 +135,18 @@ export class TransactionsService {
     }
     
   
-  search(query: string) {}
+  search(query: string) {
+    console.log(query)
+     if (this.useMockApi) {
+    const searchTerm = query.toLowerCase();
+    const filteredTransactions = this.transactions.filter(
+      (tx) =>
+        tx.Sender.toLowerCase().includes(searchTerm) ||
+        tx.Receiver.toLowerCase().includes(searchTerm) ||
+        tx.Cause.toLowerCase().includes(searchTerm) ||
+        tx.ID.toLowerCase().includes(searchTerm)
+    );
+    return { data: filteredTransactions, total: filteredTransactions.length };
+  }
+  }
 }
