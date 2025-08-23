@@ -102,42 +102,40 @@ export class TransactionsService {
     },
   ];
  constructor(private configService: ConfigService, private httpService: HttpService) {
-     
      this.useMockApi = this.configService.get<string>('USE_MOCK_API') === 'true';
      this.apiKey = this.configService.get<string>('API_KEY')!; 
      this.apiSecret = this.configService.get<string>('API_SECRET')!; 
   }
   async find_by_user(page: number, pageSize: number = 5) {
     console.log(this.useMockApi);
-    if(this.useMockApi){
+    if (this.useMockApi) {
        const startIndex = (page - 1) * pageSize;
        const endIndex = startIndex + pageSize;
        console.log(page);
        const paginatedTransactions = this.transactions.slice(startIndex, endIndex);
-
        return {
         transactions: paginatedTransactions,
         total: this.transactions.length,
         page,
         pageSize,
         totalPages: Math.ceil(this.transactions.length / pageSize),
-   }
-    }else {
+      };
+    } else {
         const response = await this.httpService.get(`${this.yayaApiBaseUrl}/find-by-user`, {
         params: { p: page },
         headers: {
           'Authorization': `Bearer ${this.apiSecret}`,
           'Content-Type': 'application/json',
-        },
+          'x-api-key': this.apiKey,},
       });
-      return response;
-    }
-    }
+       return response;
+     }
+ }
     
   
-  search(query: string) {
-    console.log(query)
-     if (this.useMockApi) {
+async search(query: string) {
+    console.log(query);
+    if (this.useMockApi) {
     const searchTerm = query.toLowerCase();
     const filteredTransactions = this.transactions.filter(
       (tx) =>
@@ -147,6 +145,18 @@ export class TransactionsService {
         tx.ID.toLowerCase().includes(searchTerm)
     );
     return { data: filteredTransactions, total: filteredTransactions.length };
+  } else {
+      const response = await this.httpService.post(
+            `${this.yayaApiBaseUrl}/search`,
+            { query },
+          {
+          headers: {
+            'Authorization': `Bearer ${this.apiSecret}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      return response;
   }
   }
 }
