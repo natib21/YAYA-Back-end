@@ -1,7 +1,14 @@
 import { Injectable } from '@nestjs/common';
-
+import { ConfigService } from '@nestjs/config';
+import { HttpService } from '@nestjs/axios';
 @Injectable()
 export class TransactionsService {
+
+  private readonly yayaApiBaseUrl = 'https://yayawallet.com/api/en/transaction';
+  private readonly apiKey: string;
+  private readonly apiSecret: string;
+  private readonly useMockApi: boolean;
+
    private transactions = [
     {
       ID: 'TX-1',
@@ -94,19 +101,39 @@ export class TransactionsService {
       CreatedAt: '2025-08-25T14:50:00Z',
     },
   ];
-  
-  find_by_user(page: number, pageSize: number = 5) {
-    const startIndex = (page - 1) * pageSize;
-    const endIndex = startIndex + pageSize;
-    console.log(page)
-    const paginatedTransactions = this.transactions.slice(startIndex, endIndex);
-    return {
-      transactions: paginatedTransactions,
-      total: this.transactions.length,
-      page,
-      pageSize,
-      totalPages: Math.ceil(this.transactions.length / pageSize)
-  };
+ constructor(private configService: ConfigService, private httpService: HttpService) {
+     
+     this.useMockApi = this.configService.get<string>('USE_MOCK_API') === 'true';
+     this.apiKey = this.configService.get<string>('API_KEY')!; 
+     this.apiSecret = this.configService.get<string>('API_SECRET')!; 
   }
+  async find_by_user(page: number, pageSize: number = 5) {
+    console.log(this.useMockApi);
+    if(this.useMockApi){
+       const startIndex = (page - 1) * pageSize;
+       const endIndex = startIndex + pageSize;
+       console.log(page);
+       const paginatedTransactions = this.transactions.slice(startIndex, endIndex);
+
+       return {
+        transactions: paginatedTransactions,
+        total: this.transactions.length,
+        page,
+        pageSize,
+        totalPages: Math.ceil(this.transactions.length / pageSize),
+   }
+    }else {
+        const response = await this.httpService.get(`${this.yayaApiBaseUrl}/find-by-user`, {
+        params: { p: page },
+        headers: {
+          'Authorization': `Bearer ${this.apiSecret}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      return response;
+    }
+    }
+    
+  
   search(query: string) {}
 }
