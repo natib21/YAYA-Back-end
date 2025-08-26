@@ -11,7 +11,7 @@ export class TransactionsController {
     if (pageNumber < 1) {
       throw new BadRequestException('Page number must be a positive integer');
     }
-    console.log('page Number: ' + pageNumber); // Consider replacing with Logger in production
+    console.log('page Number: ' + pageNumber); 
     return this.transactionsService.find_by_user(pageNumber);
   }
 
@@ -20,6 +20,7 @@ export class TransactionsController {
     if (!body.query || body.query.trim().length === 0) {
       throw new BadRequestException('Search query cannot be empty');
     }
+    console.log('Search Query: ' + body.query); 
     return this.transactionsService.search(body.query);
   }
 }

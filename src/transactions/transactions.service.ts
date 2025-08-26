@@ -2,7 +2,6 @@ import { Injectable, Logger, BadRequestException, InternalServerErrorException }
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
-import { AxiosResponse } from 'axios';
 
 interface Transaction {
   ID: string;
@@ -36,18 +35,16 @@ export class TransactionsService {
   private readonly useMockApi: boolean;
 
   private readonly transactions: Transaction[] = [
-    // Mock data remains the same
-   { ID: 'TX-1', Sender: 'Biruk Kebede', Receiver: 'User Account', Amount: 500, Currency: 'ETB', Cause: 'Salary', CreatedAt: '2025-08-20T10:00:00Z' },
-    { ID: 'TX-2', Sender: 'User Account', Receiver: 'Cafe Lucy', Amount: 150, Currency: 'ETB', Cause: 'Coffee', CreatedAt: '2025-08-20T11:30:00Z' },
-    { ID: 'TX-3', Sender: 'User Account', Receiver: 'User Account', Amount: 200, Currency: 'ETB', Cause: 'Top-up', CreatedAt: '2025-08-21T09:00:00Z' },
-    { ID: 'TX-4', Sender: 'Alice Johnson', Receiver: 'User Account', Amount: 300, Currency: 'ETB', Cause: 'Freelance Payment', CreatedAt: '2025-08-21T14:15:00Z' },
-    { ID: 'TX-5', Sender: 'User Account', Receiver: 'Tech Store', Amount: 1200, Currency: 'ETB', Cause: 'Laptop Purchase', CreatedAt: '2025-08-22T16:45:00Z' },
-    { ID: 'TX-6', Sender: 'User Account', Receiver: 'Grocery Mart', Amount: 250, Currency: 'ETB', Cause: 'Groceries', CreatedAt: '2025-08-23T12:30:00Z' },
-    { ID: 'TX-7', Sender: 'Bob Smith', Receiver: 'User Account', Amount: 400, Currency: 'ETB', Cause: 'Project Payment', CreatedAt: '2025-08-24T10:20:00Z' },
-    { ID: 'TX-8', Sender: 'User Account', Receiver: 'Bookstore', Amount: 80, Currency: 'ETB', Cause: 'Books Purchase', CreatedAt: '2025-08-24T15:00:00Z' },
-    { ID: 'TX-9', Sender: 'User Account', Receiver: 'Gym Membership', Amount: 300, Currency: 'ETB', Cause: 'Monthly Fee', CreatedAt: '2025-08-25T09:30:00Z' },
+    { ID: 'TX-1', Sender: 'Biruk Kebede', Receiver: 'User Account', Amount: 500, Currency: 'ETB', Cause: 'Salary', CreatedAt: '2025-08-20T10:00:00Z' },
+    { ID: 'TX-2', Sender: 'Nathnael Zelalem', Receiver: 'Cafe Lucy', Amount: 150, Currency: 'ETB', Cause: 'Coffee', CreatedAt: '2025-08-20T11:30:00Z' },
+    { ID: 'TX-3', Sender: 'Abel, Receiver',Receiver: 'User Account', Amount: 200, Currency: 'ETB', Cause: 'Top-up', CreatedAt: '2025-08-21T09:00:00Z' },
+    { ID: 'TX-4', Sender: 'helen Berhe', Receiver: 'User Account', Amount: 300, Currency: 'ETB', Cause: 'Freelance Payment', CreatedAt: '2025-08-21T14:15:00Z' },
+    { ID: 'TX-5', Sender: 'Edom Girma', Receiver: 'Tech Store', Amount: 1200, Currency: 'ETB', Cause: 'Laptop Purchase', CreatedAt: '2025-08-22T16:45:00Z' },
+    { ID: 'TX-6', Sender: 'Abebe Lema', Receiver: 'Grocery Mart', Amount: 250, Currency: 'ETB', Cause: 'Groceries', CreatedAt: '2025-08-23T12:30:00Z' },
+    { ID: 'TX-7', Sender: 'Bob Marly', Receiver: 'User Account', Amount: 400, Currency: 'ETB', Cause: 'Project Payment', CreatedAt: '2025-08-24T10:20:00Z' },
+    { ID: 'TX-8', Sender: 'Abey Ahmed', Receiver: 'Bookstore', Amount: 80, Currency: 'ETB', Cause: 'Books Purchase', CreatedAt: '2025-08-24T15:00:00Z' },
+    { ID: 'TX-9', Sender: 'Menilik Doctor', Receiver: 'Gym Membership', Amount: 300, Currency: 'ETB', Cause: 'Monthly Fee', CreatedAt: '2025-08-25T09:30:00Z' },
     { ID: 'TX-10', Sender: 'Charlie Brown', Receiver: 'User Account', Amount: 600, Currency: 'ETB', Cause: 'Consulting Fee', CreatedAt: '2025-08-25T14:50:00Z' },
-    
   ];
 
   constructor(private configService: ConfigService, private httpService: HttpService) {
@@ -124,13 +121,11 @@ export class TransactionsService {
             headers: {
               Authorization: `Bearer ${this.apiSecret}`,
               'Content-Type': 'application/json',
-              'X-Api-Key': this.apiKey, // Include apiKey if required
+              'X-Api-Key': this.apiKey, 
             },
           },
         ),
       );
-
-      // Adjust based on actual YayaWallet API response structure
       return this.mapApiResponseToSearchResponse(response.data);
     } catch (error) {
       this.logger.error(`Failed to search transactions: ${error.message}`);
@@ -138,9 +133,7 @@ export class TransactionsService {
     }
   }
 
-  // Helper to map API response to PaginatedResponse (adjust based on actual API response)
   private mapApiResponseToPaginatedResponse(data: any, page: number, pageSize: number): PaginatedResponse {
-    // Example mapping; adjust based on YayaWallet API response structure
     return {
       transactions: data.transactions || [],
       total: data.total || 0,
@@ -150,9 +143,8 @@ export class TransactionsService {
     };
   }
 
-  // Helper to map API response to SearchResponse (adjust based on actual API response)
+  
   private mapApiResponseToSearchResponse(data: any): SearchResponse {
-    // Example mapping; adjust based on YayaWallet API response structure
     return {
       data: data.transactions || [],
       total: data.total || 0,
